@@ -34,3 +34,9 @@ class Player:
         # Tworzenie pocisku
         bullet = Bullet(self.rect.centerx, self.rect.centery, target_x, target_y, (0, 0, 255))
         return bullet
+
+    def take_damage(self, amount):
+        self.health -= amount
+        if self.health < 0:
+            self.health = 0
+            # ToDo Dodać ekran końcowy po śmierci

@@ -4,6 +4,7 @@ import sys
 from const_values import SCREEN_WIDTH, SCREEN_HEIGHT
 from player import Player
 from bullet import Bullet
+from zombie import Zombie
 
 # Inicjalizacja Pygame
 pygame.init()
@@ -25,6 +26,11 @@ player = Player(SCREEN_WIDTH//2, SCREEN_HEIGHT//2)
 
 # Lista pocisków
 bullets = []
+
+# Lista przeciwników
+enemies = []
+enemy_spawn_time = 0  # Licznik czasu do następnego pojawienia się przeciwnika
+
 
 # Główna pętla gry
 while True:
@@ -56,6 +62,19 @@ while True:
     for bullet in bullets:
         bullet.update()
         bullet.draw(screen)
+
+    # Tworzenie nowych przeciwników
+    if pygame.time.get_ticks() > enemy_spawn_time:
+        enemies.append(Zombie(SCREEN_WIDTH, SCREEN_HEIGHT))
+        enemy_spawn_time = pygame.time.get_ticks() + 1000  # Ustaw interwał pojawiania się przeciwników (np. co 2000 ms)
+
+    # Aktualizacja przeciwników
+    for enemy in enemies:
+        enemy.update(player.rect)
+        enemy.draw(screen)
+
+        if enemy.update(player.rect):
+            player.take_damage(enemy.damage)
 
     # Aktualizacja ekranu
     pygame.display.flip()
