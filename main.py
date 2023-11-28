@@ -17,7 +17,7 @@ clock = pygame.time.Clock()
 
 # Wczytywanie tekstury ziemi
 ground_texture = pygame.image.load("images/ground_texture.jpg").convert()  # Zamień "ground_texture.png" na ścieżkę do Twojego pliku z teksturą
-
+texture_rect = ground_texture.get_rect()
 # Główna pętla gry
 while True:
     # Obsługa zdarzeń
@@ -26,9 +26,10 @@ while True:
             pygame.quit()
             sys.exit()
 
-    # Rysowanie tła
-    screen.blit(ground_texture, (0, 0))
-
+    # Rysowanie powtarzającej się tekstury tła
+    for y in range(0, SCREEN_HEIGHT, texture_rect.height):
+        for x in range(0, SCREEN_WIDTH, texture_rect.width):
+            screen.blit(ground_texture, (x, y))
     # Aktualizacja ekranu
     pygame.display.flip()
 
