@@ -1,5 +1,6 @@
 import pygame
 from const_values import SCREEN_WIDTH, SCREEN_HEIGHT
+from bullet import Bullet
 
 class Player:
     def __init__(self, x, y, health=100):
@@ -26,3 +27,10 @@ class Player:
         # Rysowanie paska zdrowia
         pygame.draw.rect(screen, (255, 0, 0), (10, SCREEN_HEIGHT - 30, self.health * 2, 20))
         pygame.draw.rect(screen, (255, 255, 255), (10, SCREEN_HEIGHT - 30, 200, 20), 2)
+
+    def shoot(self):
+        # Pobranie pozycji myszy
+        target_x, target_y = pygame.mouse.get_pos()
+        # Tworzenie pocisku
+        bullet = Bullet(self.rect.centerx, self.rect.centery, target_x, target_y, (0, 0, 255))
+        return bullet

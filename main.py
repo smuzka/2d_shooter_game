@@ -1,8 +1,9 @@
 
 import pygame
 import sys
-from player import Player
 from const_values import SCREEN_WIDTH, SCREEN_HEIGHT
+from player import Player
+from bullet import Bullet
 
 # Inicjalizacja Pygame
 pygame.init()
@@ -22,7 +23,8 @@ texture_rect = ground_texture.get_rect()
 # Tworzenie instancji gracza
 player = Player(SCREEN_WIDTH//2, SCREEN_HEIGHT//2)
 
-
+# Lista pocisków
+bullets = []
 
 # Główna pętla gry
 while True:
@@ -31,6 +33,9 @@ while True:
         if event.type == pygame.QUIT:
             pygame.quit()
             sys.exit()
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            # Tworzenie nowego pocisku, gdy gracz strzela
+            bullets.append(player.shoot())
 
     # Aktualizacja gracza
     keys_pressed = pygame.key.get_pressed()
@@ -46,6 +51,11 @@ while True:
 
     # Rysowanie paska zdrowia
     player.draw_health_bar(screen)
+
+    # Rysowanie pocisków
+    for bullet in bullets:
+        bullet.update()
+        bullet.draw(screen)
 
     # Aktualizacja ekranu
     pygame.display.flip()
