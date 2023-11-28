@@ -1,4 +1,5 @@
 import pygame
+from global_values import enemies
 
 
 class Bullet:
@@ -8,6 +9,8 @@ class Bullet:
         self.rect = pygame.Rect(x, y, self.radius * 2, self.radius * 2)  # Utworzenie prostokąta wokół okręgu
         self.rect.center = (x, y)
         self.speed = 10
+
+        self.damage = 20  # Ilość zadawanych obrażeń
 
         # self.image = pygame.Surface((10, 4))  # Rozmiar pocisku
         # self.image.fill(color)  # Kolor
@@ -22,10 +25,16 @@ class Bullet:
         self.dy = y_diff / distance  # Składowa Y wektora jednostkowego
 
 
-    def update(self):
+    def update(self, enemies):
         # Ruch pocisku
         self.rect.x += self.speed * self.dx
         self.rect.y += self.speed * self.dy
+
+        for enemy in enemies:
+            if self.rect.colliderect(enemy.rect):
+                enemy.take_damage(self.damage)
+                return True  # Pocisk zniknie po trafieniu przeciwnika
+        return False
 
     def draw(self, screen):
         pygame.draw.circle(screen, self.color, self.rect.center, self.radius)

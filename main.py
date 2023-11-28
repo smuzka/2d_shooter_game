@@ -58,10 +58,13 @@ while True:
     # Rysowanie paska zdrowia
     player.draw_health_bar(screen)
 
-    # Rysowanie pocisków
+
+    # Aktualizacja i rysowanie pocisków
     for bullet in bullets:
-        bullet.update()
-        bullet.draw(screen)
+        if bullet.update(enemies):
+            bullets.remove(bullet)  # Usuwanie pocisku, jeśli trafi przeciwnika
+        else:
+            bullet.draw(screen)
 
     # Tworzenie nowych przeciwników
     if pygame.time.get_ticks() > enemy_spawn_time:
@@ -70,11 +73,22 @@ while True:
 
     # Aktualizacja przeciwników
     for enemy in enemies:
-        enemy.update(player.rect)
-        enemy.draw(screen)
-
         if enemy.update(player.rect):
             player.take_damage(enemy.damage)
+
+        if enemy.is_dead:
+            enemies.remove(enemy)
+        else:
+            enemy.draw(screen)
+
+
+    # Obliczanie upływającego czasu
+    seconds = (pygame.time.get_ticks() - start_ticks) // 1000  # Zamiana milisekund na sekundy
+
+    # Rysowanie czasu
+    time_text = font.render(str(seconds), True, (255, 255, 255))  # Biały kolor tekstu
+    time_rect = time_text.get_rect(center=(SCREEN_WIDTH // 2, 20))
+    screen.blit(time_text, time_rect)
 
     # Aktualizacja ekranu
     pygame.display.flip()

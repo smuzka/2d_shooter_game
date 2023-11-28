@@ -7,6 +7,8 @@ class EnemyInterface(ABC):
         self.health = health
         self.max_health = health
 
+        self.is_dead = False
+
         self.rect = self.image.get_rect()
 
         # Losowe pojawianie się na brzegu ekranu
@@ -27,6 +29,12 @@ class EnemyInterface(ABC):
     @abstractmethod
     def draw(self, screen):
         pass
+
+    def take_damage(self, amount):
+        self.health -= amount
+        if self.health <= 0:
+            self.health = 0
+            self.is_dead = True  # Dodanie flagi wskazującej, że przeciwnik jest martwy
 
     def draw_health_bar(self, screen):
         # Rysowanie paska zdrowia nad przeciwnikiem

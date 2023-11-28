@@ -1,5 +1,5 @@
 import pygame
-from const_values import SCREEN_WIDTH, SCREEN_HEIGHT
+from global_values import SCREEN_WIDTH, SCREEN_HEIGHT
 from bullet import Bullet
 
 class Player:
