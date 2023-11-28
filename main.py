@@ -1,13 +1,19 @@
 
 import pygame
 import sys
-from const_values import SCREEN_WIDTH, SCREEN_HEIGHT
+from global_values import SCREEN_WIDTH, SCREEN_HEIGHT, bullets, enemies, enemy_spawn_time
 from player import Player
 from bullet import Bullet
 from zombie import Zombie
 
 # Inicjalizacja Pygame
 pygame.init()
+# Inicjalizacja modułu czcionek
+pygame.font.init()
+# Wybierz rozmiar czcionki
+font = pygame.font.Font(None, 36)
+# Zapisanie czasu startu gry
+start_ticks = pygame.time.get_ticks()
 
 # Ustawienia okna gry
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
@@ -23,14 +29,6 @@ texture_rect = ground_texture.get_rect()
 
 # Tworzenie instancji gracza
 player = Player(SCREEN_WIDTH//2, SCREEN_HEIGHT//2)
-
-# Lista pocisków
-bullets = []
-
-# Lista przeciwników
-enemies = []
-enemy_spawn_time = 0  # Licznik czasu do następnego pojawienia się przeciwnika
-
 
 # Główna pętla gry
 while True:
@@ -85,8 +83,17 @@ while True:
     # Obliczanie upływającego czasu
     seconds = (pygame.time.get_ticks() - start_ticks) // 1000  # Zamiana milisekund na sekundy
 
+
+    # Obliczanie upływającego czasu
+    total_seconds = (pygame.time.get_ticks() - start_ticks) // 1000
+    minutes = total_seconds // 60
+    seconds = total_seconds % 60
+
+    # Formatowanie czasu do formatu MM:SS
+    time_str = "{:02d}:{:02d}".format(minutes, seconds)
+
     # Rysowanie czasu
-    time_text = font.render(str(seconds), True, (255, 255, 255))  # Biały kolor tekstu
+    time_text = font.render(time_str, True, (255, 255, 255))  # Biały kolor tekstu
     time_rect = time_text.get_rect(center=(SCREEN_WIDTH // 2, 20))
     screen.blit(time_text, time_rect)
 
