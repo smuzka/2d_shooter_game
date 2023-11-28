@@ -9,6 +9,10 @@ class Player:
         self.speed = 5  # Określenie prędkości ruchu gracza
         self.health = health  # Określenie atrybutu życia
 
+        # Ograniczenie przyjmowania obrażeń, raz na pół sekundy
+        self.last_damage_time = 0
+        self.damage_cooldown = 500
+
     def update(self, keys_pressed):
         # Ruch gracza
         if keys_pressed[pygame.K_w]:  # W górę
@@ -36,7 +40,10 @@ class Player:
         return bullet
 
     def take_damage(self, amount):
-        self.health -= amount
-        if self.health < 0:
-            self.health = 0
+        current_time = pygame.time.get_ticks()
+        if current_time - self.last_damage_time > self.damage_cooldown:
+            self.health -= amount
+            self.last_damage_time = current_time
+            if self.health < 0:
+                self.health = 0
             # ToDo Dodać ekran końcowy po śmierci

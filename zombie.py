@@ -7,7 +7,7 @@ class Zombie(EnemyInterface):
         super().__init__(screen_width, screen_height)
 
         self.speed = 2  # Prędkość
-        self.damage = 2  # Ilość zadawanych obrażeń
+        self.damage = 10  # Ilość zadawanych obrażeń
 
     def update(self, player_rect):
         # Ruch w kierunku gracza
