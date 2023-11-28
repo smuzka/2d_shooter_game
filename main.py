@@ -67,11 +67,11 @@ while True:
     # Tworzenie nowych przeciwników
     if pygame.time.get_ticks() > enemy_spawn_time:
         enemies.append(Zombie(SCREEN_WIDTH, SCREEN_HEIGHT))
-        enemy_spawn_time = pygame.time.get_ticks() + 1000  # Ustaw interwał pojawiania się przeciwników (np. co 2000 ms)
+        enemy_spawn_time = pygame.time.get_ticks() + 200  # Ustaw interwał pojawiania się przeciwników (np. co 2000 ms)
 
     # Aktualizacja przeciwników
     for enemy in enemies:
-        if enemy.update(player.rect):
+        if enemy.update(player.rect, enemies):
             player.take_damage(enemy.damage)
 
         if enemy.is_dead:

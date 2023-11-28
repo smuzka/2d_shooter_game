@@ -9,7 +9,7 @@ class Zombie(EnemyInterface):
         self.speed = 2  # Prędkość
         self.damage = 10  # Ilość zadawanych obrażeń
 
-    def update(self, player_rect):
+    def update(self, player_rect, other_enemies):
         # Ruch w kierunku gracza
         x_diff = player_rect.x - self.rect.x
         y_diff = player_rect.y - self.rect.y
@@ -21,6 +21,11 @@ class Zombie(EnemyInterface):
 
         self.rect.x += self.speed * dx
         self.rect.y += self.speed * dy
+
+        # Sprawdzanie kolizji z innymi przeciwnikami
+        for enemy in other_enemies:
+            if enemy != self and self.rect.colliderect(enemy.rect):
+                self.resolve_collision(enemy)
 
         # Wykrywanie kolizji z graczem
         if self.rect.colliderect(player_rect):

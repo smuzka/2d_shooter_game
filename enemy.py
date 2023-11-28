@@ -46,3 +46,14 @@ class EnemyInterface(ABC):
         pygame.draw.rect(screen, (255,0,0), health_bar_fill_rect)
         pygame.draw.rect(screen, (255,255,255), health_bar_outline_rect, 2)
 
+    def resolve_collision(self, other):
+        # Logika do rozwiązania kolizji
+        if self.rect.x < other.rect.x:
+            self.rect.x -= 1
+        else:
+            self.rect.x += 1
+
+        if self.rect.y < other.rect.y:
+            self.rect.y -= 1
+        else:
+            self.rect.y += 1
