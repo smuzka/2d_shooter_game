@@ -2,14 +2,12 @@
 import pygame
 import sys
 from player import Player
-
+from const_values import SCREEN_WIDTH, SCREEN_HEIGHT
 
 # Inicjalizacja Pygame
 pygame.init()
 
 # Ustawienia okna gry
-SCREEN_WIDTH = 1400
-SCREEN_HEIGHT = int(SCREEN_WIDTH * 0.8)
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption("2D deadly shooter")
 
@@ -45,6 +43,9 @@ while True:
 
     # Rysowanie gracza
     player.draw(screen)
+
+    # Rysowanie paska zdrowia
+    player.draw_health_bar(screen)
 
     # Aktualizacja ekranu
     pygame.display.flip()

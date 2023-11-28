@@ -1,10 +1,12 @@
 import pygame
+from const_values import SCREEN_WIDTH, SCREEN_HEIGHT
 
 class Player:
-    def __init__(self, x, y):
+    def __init__(self, x, y, health=100):
         self.image = pygame.image.load('images/player.png').convert_alpha()  # Wczytanie tekstury gracza
         self.rect = self.image.get_rect(topleft=(x, y))
-        self.speed = 5  # Możesz dostosować prędkość ruchu gracza
+        self.speed = 5  # Określenie prędkości ruchu gracza
+        self.health = health  # Określenie atrybutu życia
 
     def update(self, keys_pressed):
         # Ruch gracza
@@ -19,3 +21,8 @@ class Player:
 
     def draw(self, screen):
         screen.blit(self.image, self.rect)
+
+    def draw_health_bar(self, screen):
+        # Rysowanie paska zdrowia
+        pygame.draw.rect(screen, (255, 0, 0), (10, SCREEN_HEIGHT - 30, self.health * 2, 20))
+        pygame.draw.rect(screen, (255, 255, 255), (10, SCREEN_HEIGHT - 30, 200, 20), 2)
