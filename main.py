@@ -1,10 +1,10 @@
 
 import pygame
 import sys
-from global_values import SCREEN_WIDTH, SCREEN_HEIGHT, bullets, enemies, enemy_spawn_time
+from global_values import SCREEN_WIDTH, SCREEN_HEIGHT, bullets, enemy_bullets, enemies, shooting_enemies, enemy_spawn_time
 from player import Player
-from bullet import Bullet
-from zombie import Zombie
+from enemies.zombie import Zombie
+from enemies.ranger import Ranger
 
 # Inicjalizacja Pygame
 pygame.init()
@@ -59,21 +59,45 @@ while True:
 
     # Aktualizacja i rysowanie pocisków
     for bullet in bullets:
-        if bullet.update(enemies):
+        if bullet.update(enemies, player):
             bullets.remove(bullet)  # Usuwanie pocisku, jeśli trafi przeciwnika
+        else:
+            bullet.draw(screen)
+
+    # Update Enemy Bullets
+    for bullet in enemy_bullets[:]:
+        if bullet.update(enemies, player.rect):
+            player.take_damage(bullet.damage)
+            enemy_bullets.remove(bullet)
         else:
             bullet.draw(screen)
 
     # Tworzenie nowych przeciwników
     if pygame.time.get_ticks() > enemy_spawn_time:
         enemies.append(Zombie(SCREEN_WIDTH, SCREEN_HEIGHT))
+        shooting_enemies.append(Ranger(SCREEN_WIDTH, SCREEN_HEIGHT))
         enemy_spawn_time = pygame.time.get_ticks() + 200  # Ustaw interwał pojawiania się przeciwników (np. co 2000 ms)
 
     # Aktualizacja przeciwników
     for enemy in enemies:
-        if enemy.update(player.rect, enemies):
+        enemy.update(player.rect, enemies)
+        didEnemyTouchPlayer = enemy.did_touch_player(player.rect)
+        if didEnemyTouchPlayer:
             player.take_damage(enemy.damage)
+        if enemy.is_dead:
+            enemies.remove(enemy)
+        else:
+            enemy.draw(screen)
 
+    # Aktualizacja przeciwników
+    for enemy in shooting_enemies:
+        bullet = enemy.update(player.rect, shooting_enemies)
+        if bullet:
+            enemy_bullets.append(bullet)
+
+        didEnemyTouchPlayer = enemy.did_touch_player(player.rect)
+        if didEnemyTouchPlayer:
+            player.take_damage(enemy.damage)
         if enemy.is_dead:
             enemies.remove(enemy)
         else:

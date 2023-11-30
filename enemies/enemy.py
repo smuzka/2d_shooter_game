@@ -8,7 +8,6 @@ class EnemyInterface(ABC):
         self.max_health = health
 
         self.is_dead = False
-
         self.rect = self.image.get_rect()
 
         # Losowe pojawianie się na brzegu ekranu
@@ -21,14 +20,30 @@ class EnemyInterface(ABC):
 
         self.speed = 3  # Możesz dostosować prędkość przeciwnika
 
-    @abstractmethod
-    def update(self, player_rect):
-        pass
 
+    def update(self, player_rect, other_enemies):
+        # Ruch w kierunku gracza
+        x_diff = player_rect.x - self.rect.x
+        y_diff = player_rect.y - self.rect.y
+        distance = (x_diff ** 2 + y_diff ** 2) ** 0.5
+        if distance == 0:
+            distance = 0.001
+        dx = x_diff / distance
+        dy = y_diff / distance
 
-    @abstractmethod
-    def draw(self, screen):
-        pass
+        self.rect.x += self.speed * dx
+        self.rect.y += self.speed * dy
+
+        # Sprawdzanie kolizji z innymi przeciwnikami
+        for enemy in other_enemies:
+            if enemy != self and self.rect.colliderect(enemy.rect):
+                self.resolve_collision(enemy)
+
+    def did_touch_player(self, player_rect):
+        # Wykrywanie kolizji z graczem
+        if self.rect.colliderect(player_rect):
+            return True  # Zwracanie wartości True, gdy nastąpi kolizja
+        return False
 
     def take_damage(self, amount):
         self.health -= amount
@@ -57,3 +72,6 @@ class EnemyInterface(ABC):
             self.rect.y -= 1
         else:
             self.rect.y += 1
+
+    def draw(self, screen):
+        self.draw_health_bar(screen)  # Rysowanie paska zdrowia

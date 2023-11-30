@@ -1,6 +1,6 @@
 import pygame
-from global_values import SCREEN_WIDTH, SCREEN_HEIGHT
-from bullet import Bullet
+from global_values import SCREEN_HEIGHT
+from enemies.bullet import Bullet
 
 class Player:
     def __init__(self, x, y, health=100):
