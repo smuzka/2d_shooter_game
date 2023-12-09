@@ -20,12 +20,14 @@ from powerUps.powerUp import PowerUp
 from powerUps.speedPowerUp import SpeedPowerUp
 from powerUps.sizePowerUp import SizePowerUp
 from powerUps.multiShotPowerUp import MultiShotPowerUp
+from powerUps.healthReset import HealthReset
 
 available_power_ups = {
     available_power_ups_names['damage_up']: lambda x,y: PowerUp(x, y),
     available_power_ups_names['speed_up']: lambda x, y: SpeedPowerUp(x, y),
     available_power_ups_names['size_down']: lambda x, y: SizePowerUp(x, y),
     available_power_ups_names['multi_shot']: lambda x, y: MultiShotPowerUp(x, y),
+    available_power_ups_names['health_reset']: lambda x, y: HealthReset(x, y),
 }
 
 available_power_ups_player_buff = {
@@ -33,6 +35,7 @@ available_power_ups_player_buff = {
     available_power_ups_names['speed_up']: lambda player: player.increase_speed(),
     available_power_ups_names['size_down']: lambda player: player.increase_size(-0.2),
     available_power_ups_names['multi_shot']: lambda player: player.increase_bullets_amount(),
+    available_power_ups_names['health_reset']: lambda player: player.health_reset(),
 }
 
 power_ups = []

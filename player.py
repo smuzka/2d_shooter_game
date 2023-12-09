@@ -11,6 +11,7 @@ class Player:
         self.rect = self.image.get_rect(topleft=(x, y))
         self.speed = 4  # Określenie prędkości ruchu gracza
         self.health = health  # Określenie atrybutu życia
+        self.max_health = health
 
         # Ograniczenie przyjmowania obrażeń, raz na pół sekundy
         self.last_damage_time = 0
@@ -24,7 +25,7 @@ class Player:
         self.damage_effect_duration = 200  # Czas trwania efektu po otrzymaniu obrażeń w milisekundach
         self.max_alpha = 180  # Maksymalna przezroczystość efektu
 
-        self.bullets_amount = 200
+        self.bullets_amount = 1
 
     def update(self, keys_pressed):
         # Ruch gracza
@@ -83,3 +84,6 @@ class Player:
 
     def increase_bullets_amount(self):
         self.bullets_amount += 1
+
+    def health_reset(self):
+        self.health = self.max_health

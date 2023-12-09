@@ -35,6 +35,26 @@ texture_rect = ground_texture.get_rect()
 player = Player(SCREEN_WIDTH//2, SCREEN_HEIGHT//2)
 player.increase_size(2)
 
+def reset_game():
+    player = Player(SCREEN_WIDTH//2, SCREEN_HEIGHT//2)
+    player.increase_size(2)
+
+    bullets = []
+    enemy_bullets = []
+    trails = []
+
+    enemies = []
+    shooting_enemies = []
+    trail_enemies = []
+
+    power_ups = []
+
+    game_over = False
+    enemies_killed = 0
+    bullets_shot = 0
+
+    return player, bullets, enemy_bullets, trails, enemies, shooting_enemies, trail_enemies, power_ups, game_over, enemies_killed, bullets_shot
+
 # Główna pętla gry
 while True:
 
@@ -44,11 +64,15 @@ while True:
             sys.exit()
         if event.type == pygame.MOUSEBUTTONDOWN:
             # Nowy pocisk
-            if(not game_over):
+            if not game_over:
                 bullets_pack = player.shoot()
                 for bullet in bullets_pack:
                     bullets_shot += 1
                     bullets.append(bullet)
+        elif event.type == pygame.KEYDOWN:
+            if game_over:
+                if event.key == pygame.K_r:
+                    player, bullets, enemy_bullets, trails, enemies, shooting_enemies, trail_enemies, power_ups, game_over, enemies_killed, bullets_shot = reset_game()
 
 
     if player.health <= 0:
@@ -58,12 +82,18 @@ while True:
         enemies_killed_text = font.render(f"Zabiłeś: {enemies_killed} wrogów", True, (255, 255, 255))
         bullets_fired_text = font.render(f"Wystrzeliłeś: {bullets_shot} pocisków", True, (255, 255, 255))
 
+        reset_text = font.render(f"Naciśnij R, aby zacząć od nowa", True, (255, 255, 255))
+
         text_rect = game_over_text.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 - 40))
         enemies_killed_rect = enemies_killed_text.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 ))
         bullets_fired_rect = bullets_fired_text.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 + 40))
+
+        reset_rect = reset_text.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 + 100))
+
         screen.blit(game_over_text, text_rect)
         screen.blit(enemies_killed_text, enemies_killed_rect)
         screen.blit(bullets_fired_text, bullets_fired_rect)
+        screen.blit(reset_text, reset_rect)
 
     if game_over:
         pygame.display.flip()

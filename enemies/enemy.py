@@ -5,7 +5,7 @@ from global_values import available_power_ups
 from powerUps.powerUpsGlobal import available_power_ups_names
 
 class EnemyInterface(ABC):
-    def __init__(self, screen_width, screen_height, health=100, powerUpChance=0.2):
+    def __init__(self, screen_width, screen_height, health=100, powerUpChance=0.3):
         self.health = health
         self.max_health = health
 
