@@ -92,8 +92,4 @@ class Player:
         self.bullets_amount += 1
 
     def health_reset(self):
-        # self.health = self.max_health
-        print("before")
-        self.health = 100
-        print("after")
-        print(self.health)
+        self.health = self.max_health
