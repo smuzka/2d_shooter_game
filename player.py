@@ -27,6 +27,9 @@ class Player:
 
         self.bullets_amount = 1
 
+        self.shoot_cooldown = 100  # Czas w milisekundach między strzałami
+        self.last_shot_time = 0
+
     def update(self, keys_pressed):
         # Ruch gracza
         if keys_pressed[pygame.K_w]:  # W górę
@@ -46,17 +49,20 @@ class Player:
         pygame.draw.rect(screen, (255, 0, 0), (10, SCREEN_HEIGHT - 30, self.health * 2, 20))
         pygame.draw.rect(screen, (255, 255, 255), (10, SCREEN_HEIGHT - 30, 200, 20), 2)
 
-    def shoot(self):
-        bullets = []
-        # Pobranie pozycji myszy
-        target_x, target_y = pygame.mouse.get_pos()
-        # Tworzenie pocisku
-        for i in range(self.bullets_amount):
-            if i % 2 == 0:
-                bullets.append(Bullet(self.rect.centerx, self.rect.centery, target_x, target_y, (0, 0, 255), self.damage, 10, False, i*5))
-            else:
-                bullets.append(Bullet(self.rect.centerx, self.rect.centery, target_x, target_y, (0, 0, 255), self.damage, 10, False, -i*5))
-        return bullets
+    def shoot(self, current_time=1):
+        if current_time - self.last_shot_time >= self.shoot_cooldown:
+            self.last_shot_time = current_time
+            bullets = []
+            # Pobranie pozycji myszy
+            target_x, target_y = pygame.mouse.get_pos()
+            # Tworzenie pocisku
+            for i in range(self.bullets_amount):
+                if i % 2 == 0:
+                    bullets.append(Bullet(self.rect.centerx, self.rect.centery, target_x, target_y, (0, 0, 255), self.damage, 10, False, i*5))
+                else:
+                    bullets.append(Bullet(self.rect.centerx, self.rect.centery, target_x, target_y, (0, 0, 255), self.damage, 10, False, -i*5))
+            return bullets
+        return []
 
     def take_damage(self, amount):
         self.damage_time = pygame.time.get_ticks()
@@ -86,4 +92,8 @@ class Player:
         self.bullets_amount += 1
 
     def health_reset(self):
-        self.health = self.max_health
+        # self.health = self.max_health
+        print("before")
+        self.health = 100
+        print("after")
+        print(self.health)

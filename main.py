@@ -2,7 +2,7 @@
 import pygame
 import sys
 import random
-from global_values import SCREEN_WIDTH, SCREEN_HEIGHT, bullets, enemy_bullets, trails, enemies, shooting_enemies, trail_enemies, enemy_spawn_time, power_ups, available_power_ups_player_buff, game_over, enemies_killed, bullets_shot
+from global_values import SCREEN_WIDTH, SCREEN_HEIGHT, bullets, enemy_bullets, trails, enemies, shooting_enemies, trail_enemies, enemy_spawn_time, power_ups, available_power_ups_player_buff, game_over, game_started, enemies_killed, bullets_shot
 from player import Player
 from enemies.zombie import Zombie
 from enemies.ranger import Ranger
@@ -57,6 +57,7 @@ def reset_game():
 
 # Główna pętla gry
 while True:
+    current_time = pygame.time.get_ticks()
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -64,16 +65,30 @@ while True:
             sys.exit()
         if event.type == pygame.MOUSEBUTTONDOWN:
             # Nowy pocisk
-            if not game_over:
+            if not game_over and game_started:
                 bullets_pack = player.shoot()
                 for bullet in bullets_pack:
                     bullets_shot += 1
                     bullets.append(bullet)
+            elif not game_started:
+                game_started = True
         elif event.type == pygame.KEYDOWN:
             if game_over:
                 if event.key == pygame.K_r:
                     player, bullets, enemy_bullets, trails, enemies, shooting_enemies, trail_enemies, power_ups, game_over, enemies_killed, bullets_shot = reset_game()
 
+    if pygame.mouse.get_pressed()[0]:
+        bullets_pack = player.shoot(current_time)
+        for bullet in bullets_pack:
+            bullets_shot += 1
+            bullets.append(bullet)
+
+    if not game_started:
+        start_text = font.render(f"Aby zacząc naciśnij lewy przycisk myszy", True, (255, 255, 255))
+        start_rect = start_text.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2))
+        screen.blit(start_text, start_rect)
+        pygame.display.flip()
+        continue
 
     if player.health <= 0:
         game_over = True
@@ -109,7 +124,6 @@ while True:
         for x in range(0, SCREEN_WIDTH, texture_rect.width):
             screen.blit(ground_texture, (x, y))
 
-    current_time = pygame.time.get_ticks()
     time_since_damage = current_time - player.damage_time
     if time_since_damage < player.damage_effect_duration:
         alpha = max(0, player.max_alpha - (player.max_alpha * (time_since_damage / player.damage_effect_duration)))
@@ -155,8 +169,8 @@ while True:
             bullet.draw(screen)
 
     # Tworzenie nowych przeciwników
-    if pygame.time.get_ticks() > enemy_spawn_time:
-        for i in range(max(5, seconds // 4)):
+    if pygame.time.get_ticks() > enemy_spawn_time or len(enemies) == 0:
+        for i in range(max(5, (minutes * 60 + seconds) // 4)):
             random_number = random.random()
             if random_number < 0.5:
                 enemies.append(Zombie(SCREEN_WIDTH, SCREEN_HEIGHT))

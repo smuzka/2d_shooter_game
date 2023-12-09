@@ -41,6 +41,7 @@ available_power_ups_player_buff = {
 power_ups = []
 
 # Stats
+game_started = False
 game_over = False
 enemies_killed = 0
 bullets_shot = 0
