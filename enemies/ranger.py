@@ -5,9 +5,9 @@ from enemies.bullet import Bullet
 class Ranger(EnemyInterface):
     def __init__(self, screen_width, screen_height):
         self.image = pygame.image.load('images/ranger.png').convert_alpha()
-        super().__init__(screen_width, screen_height)
+        super().__init__(screen_width, screen_height, 50)
 
-        self.speed = 2
+        self.speed = 1
         self.damage = 10
         # Time in milliseconds between shots
         self.shoot_cooldown = 1000

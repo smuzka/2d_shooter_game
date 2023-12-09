@@ -6,7 +6,7 @@ class Zombie(EnemyInterface):
 
         self.image = pygame.image.load('images/zombie.png').convert_alpha()
 
-        super().__init__(screen_width, screen_height)
+        super().__init__(screen_width, screen_height, 100)
 
 
         self.speed = 2  # Prędkość

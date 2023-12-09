@@ -1,6 +1,7 @@
 
 import pygame
 import sys
+import random
 from global_values import SCREEN_WIDTH, SCREEN_HEIGHT, bullets, enemy_bullets, enemies, shooting_enemies, enemy_spawn_time
 from player import Player
 from enemies.zombie import Zombie
@@ -59,12 +60,12 @@ while True:
 
     # Aktualizacja i rysowanie pocisków
     for bullet in bullets:
-        if bullet.update(enemies, player):
+        if bullet.update(enemies + shooting_enemies, player):
             bullets.remove(bullet)  # Usuwanie pocisku, jeśli trafi przeciwnika
         else:
             bullet.draw(screen)
 
-    # Update Enemy Bullets
+    # Pociski przeciwników
     for bullet in enemy_bullets[:]:
         if bullet.update(enemies, player.rect):
             player.take_damage(bullet.damage)
@@ -74,9 +75,12 @@ while True:
 
     # Tworzenie nowych przeciwników
     if pygame.time.get_ticks() > enemy_spawn_time:
-        enemies.append(Zombie(SCREEN_WIDTH, SCREEN_HEIGHT))
-        shooting_enemies.append(Ranger(SCREEN_WIDTH, SCREEN_HEIGHT))
-        enemy_spawn_time = pygame.time.get_ticks() + 200  # Ustaw interwał pojawiania się przeciwników (np. co 2000 ms)
+        if random.random() < 0.7:
+            enemies.append(Zombie(SCREEN_WIDTH, SCREEN_HEIGHT))
+        else:
+            for i in range(5):
+                shooting_enemies.append(Ranger(SCREEN_WIDTH, SCREEN_HEIGHT))
+        enemy_spawn_time = pygame.time.get_ticks() + random.randrange(1000, 2000)  # interwał pojawiania się przeciwników
 
     # Aktualizacja przeciwników
     for enemy in enemies:
@@ -89,7 +93,7 @@ while True:
         else:
             enemy.draw(screen)
 
-    # Aktualizacja przeciwników
+    # Aktualizacja strzelających przeciwników
     for enemy in shooting_enemies:
         bullet = enemy.update(player.rect, shooting_enemies)
         if bullet:
@@ -99,7 +103,7 @@ while True:
         if didEnemyTouchPlayer:
             player.take_damage(enemy.damage)
         if enemy.is_dead:
-            enemies.remove(enemy)
+            shooting_enemies.remove(enemy)
         else:
             enemy.draw(screen)
 
