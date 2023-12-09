@@ -1,14 +1,18 @@
 import pygame
 import random
-from abc import ABC, abstractmethod
+from abc import ABC
+from global_values import available_power_ups
+from powerUps.powerUpsGlobal import available_power_ups_names
 
 class EnemyInterface(ABC):
-    def __init__(self, screen_width, screen_height, health=100):
+    def __init__(self, screen_width, screen_height, health=100, powerUpChance=0.9):
         self.health = health
         self.max_health = health
 
         self.is_dead = False
         self.rect = self.image.get_rect()
+
+        self.powerUpChance = powerUpChance
 
         # Losowe pojawianie się na brzegu ekranu
         if random.choice([True, False]):  # Losowe wybieranie między górnym/dolnym a lewym/prawym brzegiem
@@ -50,6 +54,12 @@ class EnemyInterface(ABC):
         if self.health <= 0:
             self.health = 0
             self.is_dead = True  # Dodanie flagi wskazującej, że przeciwnik jest martwy
+
+    def didDropPowerUp(self):
+        if random.random() < self.powerUpChance:
+            power_up_name = random.choice(list(available_power_ups_names))
+            return available_power_ups[power_up_name](self.rect.x, self.rect.y)
+
 
     def draw_health_bar(self, screen):
         # Rysowanie paska zdrowia nad przeciwnikiem

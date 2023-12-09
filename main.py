@@ -2,7 +2,7 @@
 import pygame
 import sys
 import random
-from global_values import SCREEN_WIDTH, SCREEN_HEIGHT, bullets, enemy_bullets, enemies, shooting_enemies, enemy_spawn_time
+from global_values import SCREEN_WIDTH, SCREEN_HEIGHT, bullets, enemy_bullets, enemies, shooting_enemies, enemy_spawn_time, power_ups, available_power_ups_player_buff
 from player import Player
 from enemies.zombie import Zombie
 from enemies.ranger import Ranger
@@ -13,6 +13,8 @@ pygame.init()
 pygame.font.init()
 # Wybierz rozmiar czcionki
 font = pygame.font.Font(None, 36)
+info_font = pygame.font.Font(None, 24)
+
 # Zapisanie czasu startu gry
 start_ticks = pygame.time.get_ticks()
 
@@ -30,6 +32,7 @@ texture_rect = ground_texture.get_rect()
 
 # Tworzenie instancji gracza
 player = Player(SCREEN_WIDTH//2, SCREEN_HEIGHT//2)
+player.increase_size(2)
 
 # Główna pętla gry
 while True:
@@ -76,11 +79,12 @@ while True:
     # Tworzenie nowych przeciwników
     if pygame.time.get_ticks() > enemy_spawn_time:
         if random.random() < 0.7:
-            enemies.append(Zombie(SCREEN_WIDTH, SCREEN_HEIGHT))
+            for i in range(5):
+                enemies.append(Zombie(SCREEN_WIDTH, SCREEN_HEIGHT))
         else:
             for i in range(5):
                 shooting_enemies.append(Ranger(SCREEN_WIDTH, SCREEN_HEIGHT))
-        enemy_spawn_time = pygame.time.get_ticks() + random.randrange(1000, 2000)  # interwał pojawiania się przeciwników
+        enemy_spawn_time = pygame.time.get_ticks() + random.randrange(4000, 8000)  # interwał pojawiania się przeciwników
 
     # Aktualizacja przeciwników
     for enemy in enemies:
@@ -89,6 +93,9 @@ while True:
         if didEnemyTouchPlayer:
             player.take_damage(enemy.damage)
         if enemy.is_dead:
+            power_up = enemy.didDropPowerUp()
+            if power_up:
+                power_ups.append(power_up)
             enemies.remove(enemy)
         else:
             enemy.draw(screen)
@@ -103,14 +110,26 @@ while True:
         if didEnemyTouchPlayer:
             player.take_damage(enemy.damage)
         if enemy.is_dead:
+            power_up = enemy.didDropPowerUp()
+            if power_up:
+                power_ups.append(power_up)
             shooting_enemies.remove(enemy)
         else:
             enemy.draw(screen)
 
+    # Rysowanie i sprawdzanie zbierania power-upów
+    for power_up in power_ups[:]:
+        power_up.draw(screen)
+        if player.rect.colliderect(power_up.rect):
+            available_power_ups_player_buff[power_up.type](player)
+            power_ups.remove(power_up)
 
-    # Obliczanie upływającego czasu
-    seconds = (pygame.time.get_ticks() - start_ticks) // 1000  # Zamiana milisekund na sekundy
+    # Rysowanie statystyk gracza
+    damage_text = font.render(f"Obrażenia: {player.damage}", True, (255, 255, 255))
+    speed_text = font.render(f"Szybkość: {player.speed}", True, (255, 255, 255))
 
+    screen.blit(damage_text, (10, 10))  # Pozycja tekstu obrażeń
+    screen.blit(speed_text, (10, 35))  # Pozycja tekstu szybkości
 
     # Obliczanie upływającego czasu
     total_seconds = (pygame.time.get_ticks() - start_ticks) // 1000
