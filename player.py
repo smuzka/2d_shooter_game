@@ -65,7 +65,6 @@ class Player:
             self.last_damage_time = current_time
             if self.health < 0:
                 self.health = 0
-            # ToDo Dodać ekran końcowy po śmierci
 
     def increase_damage(self, damage_increase=5):
         self.damage += damage_increase
