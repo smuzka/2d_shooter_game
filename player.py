@@ -1,6 +1,8 @@
 import pygame
-from global_values import SCREEN_HEIGHT
+
 from enemies.bullet import Bullet
+from global_values import SCREEN_HEIGHT
+
 
 class Player:
     def __init__(self, x, y, health=100):
@@ -17,6 +19,12 @@ class Player:
 
         # Nowe atrybuty do skalowania
         self.scale_factor = 1.0  # Początkowy współczynnik skalowania
+
+        self.damage_time = 0
+        self.damage_effect_duration = 200  # Czas trwania efektu po otrzymaniu obrażeń w milisekundach
+        self.max_alpha = 180  # Maksymalna przezroczystość efektu
+
+        self.bullets_amount = 200
 
     def update(self, keys_pressed):
         # Ruch gracza
@@ -38,13 +46,19 @@ class Player:
         pygame.draw.rect(screen, (255, 255, 255), (10, SCREEN_HEIGHT - 30, 200, 20), 2)
 
     def shoot(self):
+        bullets = []
         # Pobranie pozycji myszy
         target_x, target_y = pygame.mouse.get_pos()
         # Tworzenie pocisku
-        bullet = Bullet(self.rect.centerx, self.rect.centery, target_x, target_y, (0, 0, 255), self.damage)
-        return bullet
+        for i in range(self.bullets_amount):
+            if i % 2 == 0:
+                bullets.append(Bullet(self.rect.centerx, self.rect.centery, target_x, target_y, (0, 0, 255), self.damage, 10, False, i*5))
+            else:
+                bullets.append(Bullet(self.rect.centerx, self.rect.centery, target_x, target_y, (0, 0, 255), self.damage, 10, False, -i*5))
+        return bullets
 
     def take_damage(self, amount):
+        self.damage_time = pygame.time.get_ticks()
         current_time = pygame.time.get_ticks()
         if current_time - self.last_damage_time > self.damage_cooldown:
             self.health -= amount
@@ -57,11 +71,16 @@ class Player:
         self.damage += damage_increase
 
     def increase_speed(self, speed_increase=0.3):
-        self.speed += speed_increase
+        if (self.speed < 10):
+            self.speed += speed_increase
 
     def increase_size(self, scale_increment=-0.1):
-        self.scale_factor += scale_increment
-        new_size = (int(self.original_image.get_width() * self.scale_factor),
-                    int(self.original_image.get_height() * self.scale_factor))
-        self.image = pygame.transform.scale(self.original_image, new_size)
-        self.rect = self.image.get_rect(center=self.rect.center)  # Aktualizacja rect, aby zachować pozycję
+        if (self.scale_factor > 0.99):
+            self.scale_factor += scale_increment
+            new_size = (int(self.original_image.get_width() * self.scale_factor),
+                        int(self.original_image.get_height() * self.scale_factor))
+            self.image = pygame.transform.scale(self.original_image, new_size)
+            self.rect = self.image.get_rect(center=self.rect.center)
+
+    def increase_bullets_amount(self):
+        self.bullets_amount += 1
